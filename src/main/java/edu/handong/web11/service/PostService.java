@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,15 +17,21 @@ import java.util.List;
 public class PostService {
     private final PostRepository repository;
     private final FileStorageService storage;
+
     public PostService(PostRepository repository, FileStorageService storage) {
-        this.repository = repository; this.storage = storage;
+        this.repository = repository;
+        this.storage = storage;
     }
 
     @Transactional(readOnly = true)
-    public List<Post> all() { return repository.findAll(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "id")); }
+    public List<Post> all() {
+        return repository.findAll(org.springframework.data.domain.Sort.by(org.springframework.data.domain.Sort.Direction.DESC, "id"));
+    }
 
     @Transactional(readOnly = true)
-    public Post get(Long id) { return repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글이 없습니다.")); }
+    public Post get(Long id) {
+        return repository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글이 없습니다."));
+    }
 
     @Transactional
     public Long create(PostForm form, List<MultipartFile> files) {
@@ -40,7 +47,10 @@ public class PostService {
             return repository.saveAndFlush(post).getId();
         } catch (RuntimeException ex) {
             createdFiles.forEach(item -> {
-                try { storage.deleteIfExists(item); } catch (RuntimeException ignored) {}
+                try {
+                    storage.deleteIfExists(item);
+                } catch (RuntimeException ignored) {
+                }
             });
             throw ex;
         }

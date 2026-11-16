@@ -53,7 +53,10 @@ public class FileStorageService {
             };
             return new Attachment(original, stored, contentType, file.getSize());
         } catch (IOException e) {
-            try { Files.deleteIfExists(target); } catch (IOException ignored) {}
+            try {
+                Files.deleteIfExists(target);
+            } catch (IOException ignored) {
+            }
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 저장 실패", e);
         }
     }
